@@ -28,6 +28,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.shape.PathElement;
 import javafx.util.Duration;
 import pkgCore.Action;
 import pkgCore.GamePlay;
@@ -114,24 +115,18 @@ public class BlackJackController implements Initializable {
 		ImageView imgDealCard = BuildImage(11);
 		mainAnchor.getChildren().add(img);
 
-		//	Create the Translation transition (we're using a Path, but this is how you do a translate):
-		TranslateTransition transT = CreateTranslateTransition(pntDeck, pntCardDealt, img);
 		
 		//	Create a Rotate transition
 		RotateTransition rotT = CreateRotateTransition(img);
 		
-		//	Create a Scale transition (we're not using it, but this is how you do it)
-		ScaleTransition scaleT = CreateScaleTransition(img);
-		
 		//	Create a Path transition
 		PathTransition pathT = CreatePathTransition(pntDeck, pntCardDealt, img);
-
+		
 		//	Create a new Parallel transition.
 		ParallelTransition patTMoveRot = new ParallelTransition();
 		
 		//	Add transitions you want to execute currently to the parallel transition
 		patTMoveRot.getChildren().addAll(rotT, pathT);
-		// patTMoveRot.getChildren().addAll(pathT, rotT);
 
 		//	Create a new Parallel transition to fade in/fade out
 		ParallelTransition patTFadeInFadeOut = createFadeTransition(
@@ -288,14 +283,13 @@ public class BlackJackController implements Initializable {
 	private PathTransition CreatePathTransition(Point2D fromPoint, Point2D toPoint, ImageView img) {
 		Path path = new Path();
 		
-		//TODO: Fix the Path transition.  My Path looks terrible...  do something cool :)
 		
 		path.getElements().add(new MoveTo(fromPoint.getX(), fromPoint.getY()));
-		path.getElements().add(new CubicCurveTo(toPoint.getX() * 2, toPoint.getY() * 2, toPoint.getX() / 3,
-				toPoint.getY() / 3, toPoint.getX(), toPoint.getY()));
-		// path.getElements().add(new CubicCurveTo(0, 120, 0, 240, 380, 240));
+		path.getElements().add(new CubicCurveTo((toPoint.getX() +fromPoint.getX())*0.5, (toPoint.getY() +fromPoint.getY())*0.9, 
+				(toPoint.getX() +fromPoint.getX())*0.9, (toPoint.getY() +fromPoint.getY())*0.45, toPoint.getX()+40, toPoint.getY()+40));
+	
 		PathTransition pathTransition = new PathTransition();
-		pathTransition.setDuration(Duration.millis(750));
+		pathTransition.setDuration(Duration.millis(300));
 		pathTransition.setPath(path);
 		pathTransition.setNode(img);
 		pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
@@ -318,9 +312,9 @@ public class BlackJackController implements Initializable {
 
 	private RotateTransition CreateRotateTransition(ImageView img) {
 
-		RotateTransition rotateTransition = new RotateTransition(Duration.millis(iAnimationLength / 2), img);
+		RotateTransition rotateTransition = new RotateTransition(Duration.millis(200), img);
 		rotateTransition.setByAngle(180F);
-		rotateTransition.setCycleCount(2);
+		rotateTransition.setCycleCount(6);
 		rotateTransition.setAutoReverse(false);
 
 		return rotateTransition;
